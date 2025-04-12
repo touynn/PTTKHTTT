@@ -1,4 +1,5 @@
 // _app.js (or a custom layout component)
+"use client"
 import { useEffect } from 'react';
 
 function MyApp() {
@@ -14,8 +15,8 @@ function MyApp() {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, []); // Empty dependency array ensures this runs only once after the initial render
-
-  return <></>;
+  
+  return <div></div>;
 }
 
 export default MyApp;
