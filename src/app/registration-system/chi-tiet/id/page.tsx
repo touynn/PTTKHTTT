@@ -1,7 +1,8 @@
-"use client"; 
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { AlertCircle } from "lucide-react"
 
 // Define the type of the data object
 interface PhieuDangKy {
@@ -23,10 +24,35 @@ const DetailRow = ({ label, value }: { label: string; value: string }) => (
   </div>
 );
 
+const UnsuccessfulPage = () => {
+  const router = useRouter();
+
+  return (
+    <div className="container mx-auto p-4 max-w-md">
+      <div className="bg-white rounded-md shadow p-6">
+        <div className="flex flex-col items-center justify-center space-y-4">
+          <div className="flex items-center justify-center w-12 h-12 rounded-full bg-red-100">
+            <AlertCircle className="h-6 w-6 text-red-600" />
+          </div>
+          <h2 className="text-lg font-semibold text-center">Không có phiếu đăng ký phù hợp</h2>
+          <button
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded w-full transition-colors"
+            onClick={() => router.back()}
+          >
+            Quay lại
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function ChiTietPage() {
   const params = useParams();
-  const id = Array.isArray(params.id) ? params.id[0] : (params.id as string);
-  const soDienThoai = Array.isArray(params.so_dien_thoai) ? params.so_dien_thoai[0] : (params.so_dien_thoai as string);
+  const id = Array.isArray(params.id) ? params.id[0] : params.id as string;
+  const soDienThoai = Array.isArray(params.so_dien_thoai)
+    ? params.so_dien_thoai[0]
+    : params.so_dien_thoai as string;
   const router = useRouter();
 
   // Explicitly define the state type
@@ -35,46 +61,41 @@ export default function ChiTietPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch(`/api/laythongtin?id=${id}&soDienThoai=${soDienThoai}`);
+        const res = await fetch(
+          `/api/laythongtin?id=${id}&soDienThoai=${soDienThoai}`
+        );
         if (res.ok) {
           const data = await res.json();
-          setPhieu(data.phieu);
+          if (data.phieu) {
+            setPhieu(data.phieu);
+          } else {
+            router.push("/registration-system/khong-thanh-cong");
+          }
         } else {
-          console.error('Không thể tải dữ liệu, mã lỗi:', res.status);
+          console.error("Không thể tải dữ liệu, mã lỗi:", res.status);
+          router.push("/registration-system/khong-thanh-cong");
         }
       } catch (error) {
-        console.error('Lỗi khi gọi API:', error);
+        console.error("Lỗi khi gọi API:", error);
+        router.push("/registration-system/khong-thanh-cong");
       }
     };
 
     if (id && soDienThoai) {
       fetchData();
     }
-  }, [id, soDienThoai]);
+  }, [id, soDienThoai, router]);
 
   const handleBack = () => {
-    router.push('/registration-system/danh-sach');
+    router.push("/registration-system/danh-sach");
   };
 
   const handleHome = () => {
-    router.push('/');
+    router.push("/");
   };
 
   if (!phieu) {
-    return (
-      <div className="container mx-auto p-4 max-w-md">
-        <div className="bg-white rounded-md shadow p-4">
-          <h1 className="text-xl font-bold mb-4 text-red-500">Không tìm thấy phiếu đăng ký</h1>
-          <p className="mb-4">Không tìm thấy phiếu đăng ký với mã: {id}</p>
-          <button
-            onClick={handleHome}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-medium px-4 py-2 rounded"
-          >
-            Quay lại trang chủ
-          </button>
-        </div>
-      </div>
-    );
+    return <UnsuccessfulPage />;
   }
 
   return (
@@ -87,11 +108,11 @@ export default function ChiTietPage() {
             <h2 className="text-lg font-semibold">Mã phiếu: {phieu.id}</h2>
             <span
               className={`px-2 py-1 rounded-full text-xs font-medium ${
-                phieu.trang_thai === 'Đã duyệt'
-                  ? 'bg-green-100 text-green-800'
-                  : phieu.trang_thai === 'Chờ duyệt'
-                  ? 'bg-yellow-100 text-yellow-800'
-                  : 'bg-red-100 text-red-800'
+                phieu.trang_thai === "Đã duyệt"
+                  ? "bg-green-100 text-green-800"
+                  : phieu.trang_thai === "Chờ duyệt"
+                  ? "bg-yellow-100 text-yellow-800"
+                  : "bg-red-100 text-red-800"
               }`}
             >
               {phieu.trang_thai}
@@ -110,11 +131,14 @@ export default function ChiTietPage() {
         </div>
 
         <div className="mt-6 flex justify-between">
-          <button onClick={handleBack} className="border border-gray-300 px-4 py-2 rounded hover:bg-gray-100">
+          <button
+            onClick={handleBack}
+            className="border border-gray-300 px-4 py-2 rounded hover:bg-gray-100"
+          >
             Quay lại
           </button>
 
-          {phieu.trang_thai === 'Chờ duyệt' && (
+          {phieu.trang_thai === "Chờ duyệt" && (
             <div className="space-x-2">
               <button className="bg-green-500 hover:bg-green-600 text-white font-medium px-4 py-2 rounded">
                 Duyệt
