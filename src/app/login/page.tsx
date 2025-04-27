@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import { RedirectToSpecificUser } from "@/lib/redirect";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { User } from "../api/authenticate/route";
 
 const Authenticate = async (username: string, password: string) => {
   try {
@@ -49,6 +48,11 @@ export default function LoginPage() {
     const user = await Authenticate(username, password);  
     let permission_id = user?.ma_quyen;
     let permission = undefined;
+
+    if(user !== undefined)
+    {
+      localStorage.setItem('user_id', user.id);
+    }
 
     if(permission_id !== undefined) 
     {
