@@ -1,4 +1,4 @@
-import { sql } from '../lib/db';
+import { sql } from '../../lib/db';
 import { NextResponse } from 'next/server';
 
 export async function executeQuery(query: string, values: any[]) {
@@ -12,7 +12,7 @@ export async function executeQuery(query: string, values: any[]) {
   }
 }
 
-export async function Query(request: string){
+export async function Query(request: string) {
   try {
     // Use tagged template literals for safe queries
     // Example: Fetching users
@@ -27,8 +27,8 @@ export async function Query(request: string){
     console.error('Database Error:', error);
     // Avoid sending detailed error messages to the client in production
     return NextResponse.json(
-        { message: 'Failed to fetch' },
-        { status: 500 }
+      { message: 'Failed to fetch' },
+      { status: 500 }
     );
   }
 }

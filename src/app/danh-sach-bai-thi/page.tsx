@@ -18,7 +18,7 @@ export default function ExamListPage() {
   useEffect(() => {
     const fetchExams = async () => {
       try {
-        const response = await fetch("../api/exams");
+        const response = await fetch("/api/exams");
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }

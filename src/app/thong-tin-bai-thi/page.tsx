@@ -12,7 +12,7 @@ export default function ExamDetailsPage() {
   useEffect(() => {
     const fetchExamDetails = async () => {
       if (examCode) {
-        const response = await fetch("../api/exam_details", {
+        const response = await fetch("/api/exam_details", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -20,11 +20,14 @@ export default function ExamDetailsPage() {
           body: JSON.stringify({ exam_code: examCode }),
         });
         const data = await response.json();
-        setExamDetails(data.result);
+        setExamDetails(data.result?.[0]);
       }
     };
     fetchExamDetails();
+
   }, [examCode])
+
+  useEffect(() => console.log(examDetails), [examDetails])
 
   const handleGoBack = () => {
     router.push("/danh-sach-bai-thi")
@@ -52,14 +55,20 @@ export default function ExamDetailsPage() {
             <div className="flex items-center">
               <label className="w-32 text-right mr-4 font-medium">Số chứng chỉ:</label>
               <div className="flex-1 p-2 border border-gray-300 bg-gray-200 rounded">
-                {examDetails?.certificateNumber || ""}
+                {examDetails?.certificatenumber || ""}
               </div>
             </div>
 
             <div className="flex items-center">
               <label className="w-32 text-right mr-4 font-medium">Ngày cấp:</label>
               <div className="flex-1 p-2 border border-gray-300 bg-gray-200 rounded">
-                {examDetails?.issueDate || ""}
+                {
+                  new Date(examDetails?.issuedate || "").toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })
+                }
               </div>
             </div>
           </div>
