@@ -44,23 +44,25 @@ export default function LoginPage() {
   const router = useRouter();
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [authFail, setAuthFail] = useState(false);
   const BTN_Login = async () => {
-    const user = await Authenticate(username, password);  
+    const user = await Authenticate(username, password);
     let permission_id = user?.ma_quyen;
     let permission = undefined;
 
-    if(user !== undefined)
-    {
+    if (user !== undefined) {
       localStorage.setItem('user_id', user.id);
     }
+    else {
+      setAuthFail(true);
+      return;
+    }
 
-    if(permission_id !== undefined) 
-    {
+    if (permission_id !== undefined) {
       permission = await GetPermissionName(permission_id);
     }
 
-    if(permission !== undefined)
-    {
+    if (permission !== undefined) {
       RedirectToSpecificUser(permission?.ten_quyen, router);
     }
   };
@@ -68,7 +70,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-[#e8f5e9]">
       <div className="w-full max-w-md">
         <div className="flex justify-center mb-8">
-          <Image src="/placeholder.svg?height=80&width=120" width={120} height={80} alt="Company Logo" priority />
+          <Image src="/placeholder.png" width={120} height={60} alt="Company Logo" priority />
         </div>
 
         <div className="bg-white p-8 rounded-lg shadow-sm">
@@ -78,20 +80,20 @@ export default function LoginPage() {
                 <label htmlFor="username" className="text-sm font-medium">
                   Username
                 </label>
-                <Input 
-                  id="username" placeholder="staff" className="w-full border rounded-md px-3 py-2" 
+                <Input
+                  id="username" placeholder="staff" className="w-full border rounded-md px-3 py-2"
                   value={username}
-                  onChange={(e) => setUsername(e.target.value)}/>
+                  onChange={(e) => setUsername(e.target.value)} />
               </div>
 
               <div className="space-y-2">
                 <label htmlFor="password" className="text-sm font-medium">
                   Password
                 </label>
-                <Input 
-                  id="password" type="password" placeholder="0a@" className="w-full border rounded-md px-3 py-2" 
+                <Input
+                  id="password" type="password" placeholder="0a@" className="w-full border rounded-md px-3 py-2"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}/>
+                  onChange={(e) => setPassword(e.target.value)} />
               </div>
 
               <Button
@@ -103,6 +105,9 @@ export default function LoginPage() {
               </Button>
             </div>
           </form>
+          {authFail && (
+            <p style={{ color: 'red' }}>Login failed, check again</p>
+          )}
         </div>
       </div>
     </div>
