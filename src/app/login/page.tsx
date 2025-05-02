@@ -106,7 +106,7 @@ export default function LoginPage() {
             </div>
           </form>
           {authFail && (
-            <p style={{ color: 'red' }}>Login failed, check again</p>
+            <p style={{ color: 'red' }}>Lỗi đăng nhập, kiểm tra lại thông tin.</p>
           )}
         </div>
       </div>
