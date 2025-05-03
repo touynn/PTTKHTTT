@@ -1,20 +1,30 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { AlertCircle } from "lucide-react"
 
 // Define the type of the data object
 interface PhieuDangKy {
   id: string;
   trang_thai: string;
-  loai_phieu_dang_ky: string;
+  ma_loai_phieu_dang_ky: string;
   ngay_dang_ky: string;
-  ho_va_ten: string;
-  so_dien_thoai: string;
-  email: string;
-  dia_chi: string;
-  ghi_chu: string;
+  ma_nguoi_dang_ky: string
+}
+
+const RetrieveForm = async (id: string) => {
+  try {
+    const url = `/api/registration_form/retrieve?maPhieu=${id}`;
+    const res = await fetch(url, {
+      method: 'GET',
+    });
+    const data = await res.json();
+    console.log('Result:', data);
+    return data.data.result?.[0];
+  } catch (error) {
+    console.error('Error:', error);
+  }
 }
 
 const DetailRow = ({ label, value }: { label: string; value: string }) => (
@@ -48,51 +58,31 @@ const UnsuccessfulPage = () => {
 };
 
 export default function ChiTietPage() {
-  const params = useParams();
-  const id = Array.isArray(params.id) ? params.id[0] : params.id as string;
-  const soDienThoai = Array.isArray(params.so_dien_thoai)
-    ? params.so_dien_thoai[0]
-    : params.so_dien_thoai as string;
+  const searchParams = useSearchParams();
+  const id = searchParams.get('maPhieu') as string;
+  console.log(id);
   const router = useRouter();
 
   // Explicitly define the state type
   const [phieu, setPhieu] = useState<PhieuDangKy | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetch(
-          `/api/laythongtin?id=${id}&soDienThoai=${soDienThoai}`
-        );
-        if (res.ok) {
-          const data = await res.json();
-          if (data.phieu) {
-            setPhieu(data.phieu);
-          } else {
-            router.push("/registration-system/khong-thanh-cong");
-          }
-        } else {
-          console.error("Không thể tải dữ liệu, mã lỗi:", res.status);
-          router.push("/registration-system/khong-thanh-cong");
-        }
-      } catch (error) {
-        console.error("Lỗi khi gọi API:", error);
-        router.push("/registration-system/khong-thanh-cong");
+    const Retrieve = async () => {
+      const res = await RetrieveForm(id);
+      console.log(res);
+      if(res !== undefined)
+      {
+        setPhieu(res);
       }
-    };
-
-    if (id && soDienThoai) {
-      fetchData();
     }
-  }, [id, soDienThoai, router]);
+    Retrieve();
+  }, [setPhieu]);
+  useEffect(() => {console.log(phieu)}, [phieu])
 
   const handleBack = () => {
-    router.push("/registration-system/danh-sach");
+    router.push("/user/nh%C3%A2n%20vi%C3%AAn%20ti%E1%BA%BFp%20nh%E1%BA%ADn/danh-sach");
   };
 
-  const handleHome = () => {
-    router.push("/");
-  };
 
   if (!phieu) {
     return <UnsuccessfulPage />;
@@ -121,13 +111,9 @@ export default function ChiTietPage() {
         </div>
 
         <div className="space-y-3">
-          <DetailRow label="Loại phiếu" value={phieu.loai_phieu_dang_ky} />
-          <DetailRow label="Ngày đăng ký" value={phieu.ngay_dang_ky} />
-          <DetailRow label="Họ và tên" value={phieu.ho_va_ten} />
-          <DetailRow label="Số điện thoại" value={phieu.so_dien_thoai} />
-          <DetailRow label="Email" value={phieu.email} />
-          <DetailRow label="Địa chỉ" value={phieu.dia_chi} />
-          <DetailRow label="Ghi chú" value={phieu.ghi_chu} />
+          <DetailRow label="Loại phiếu" value={phieu.ma_loai_phieu_dang_ky} />
+          <DetailRow label="Ngày đăng ký" value={new Date(phieu.ngay_dang_ky).toLocaleDateString('en-GB')} />
+          <DetailRow label="Người đăng ký" value={phieu.ma_nguoi_dang_ky} />
         </div>
 
         <div className="mt-6 flex justify-between">

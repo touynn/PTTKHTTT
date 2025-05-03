@@ -9,6 +9,7 @@ export async function POST(req: Request) {
       const query = `SELECT 1 as authsuccess
       FROM quyen
       WHERE id = ${permission_id} AND LOWER(ten_quyen) = LOWER('${permission}')`;
+      console.log(permission);
       const response = await Query(query);
       const data = await response.json();
       return NextResponse.json(data);

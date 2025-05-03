@@ -80,10 +80,15 @@ export default function ClientLayout({
 
     return (
         <div>
-            <Navbar></Navbar>
-            <main className="container mx-auto p-4">
-                {!auth_fail && children}
-            </main>
+            {
+                !auth_fail &&
+                <div>
+                    <Navbar></Navbar>
+                    <main className="container mx-auto p-4">
+                        {children}
+                    </main>
+                </div>
+            }
         </div>
     )
 }

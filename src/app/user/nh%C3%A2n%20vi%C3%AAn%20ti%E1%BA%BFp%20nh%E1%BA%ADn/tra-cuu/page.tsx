@@ -34,7 +34,7 @@ export default function TraCuuPage() {
     }
 
 
-    router.push(`/registration-system/chi-tiet/id?maPhieu=${encodeURIComponent(maPhieu)}`)
+    router.push(`/user/nh%C3%A2n%20vi%C3%AAn%20ti%E1%BA%BFp%20nh%E1%BA%ADn/chi-tiet/id?maPhieu=${encodeURIComponent(maPhieu)}`)
   }
 
   return (
