@@ -7,18 +7,16 @@ export async function GET(req: NextRequest) {
     // Lấy tham số từ query string
     const url = req.nextUrl;
     const maPhieu = url.searchParams.get('maPhieu');
-    const soDienThoai = url.searchParams.get('soDienThoai');
     
-    if (!maPhieu || !soDienThoai) {
-      return NextResponse.json({ message: "Thiếu tham số maPhieu hoặc soDienThoai" }, { status: 400 });
+    if (!maPhieu) {
+      return NextResponse.json({ message: "Thiếu tham số maPhieui" }, { status: 400 });
     }
 
     // Truy vấn dữ liệu từ cơ sở dữ liệu, kết hợp bảng nguoi_dang_ky và phieu_dang_ky
     const phieu = await sql`
-      SELECT phieu_dang_ky.*, nguoi_dang_ky.so_dien_thoai
+      SELECT *
       FROM phieu_dang_ky
-      JOIN nguoi_dang_ky ON phieu_dang_ky.id = nguoi_dang_ky.id
-      WHERE phieu_dang_ky.id = ${maPhieu} AND nguoi_dang_ky.so_dien_thoai = ${soDienThoai}
+      WHERE id = ${maPhieu}
     `;
 
     if (phieu.length === 0) {

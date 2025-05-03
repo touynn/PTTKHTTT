@@ -5,13 +5,11 @@ import { useRouter } from "next/navigation"
 
 interface SearchData {
   maPhieu: string
-  soDienThoai: string
 }
 
 export default function TraCuuPage() {
   const [searchData, setSearchData] = useState<SearchData>({
-    maPhieu: "",
-    soDienThoai: "",
+    maPhieu: ""
   })
 
   const router = useRouter() // <--- THÊM dòng này
@@ -28,15 +26,15 @@ export default function TraCuuPage() {
     e.preventDefault()
 
     // Chuyển hướng sang trang chi tiết
-    const { maPhieu, soDienThoai } = searchData
+    const { maPhieu } = searchData
 
-    if (!searchData.maPhieu.trim() || !searchData.soDienThoai.trim()) {
+    if (!searchData.maPhieu.trim()) {
       alert("Chưa nhập đủ thông tin")
       return
     }
 
 
-    router.push(`/registration-system/chi-tiet/id?maPhieu=${encodeURIComponent(maPhieu)}&soDienThoai=${encodeURIComponent(soDienThoai)}`)
+    router.push(`/registration-system/chi-tiet/id?maPhieu=${encodeURIComponent(maPhieu)}`)
   }
 
   return (
@@ -55,20 +53,6 @@ export default function TraCuuPage() {
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Nhập mã phiếu đăng ký"
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center">
-            <span className="w-32">SĐT liên hệ:</span>
-            <div className="flex-1">
-              <input
-                type="tel"
-                name="soDienThoai"
-                value={searchData.soDienThoai}
-                onChange={handleChange}
-                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Nhập số điện thoại liên hệ"
               />
             </div>
           </div>
